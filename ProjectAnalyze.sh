@@ -19,7 +19,6 @@ compare_status(){
 	fi
 }
 
-
 changes(){
 	git diff > changes.log
 	read -p "Changes saved. To view, enter y" Input2
@@ -113,15 +112,37 @@ permissions(){
 	fi
 }
 
+#Information on encryption and decryption was found here: https://www.madboa.com/geek/openssl/#encrypt-simple
+encrypt(){
+	read -p "Enter name of file to be encrypted: " Input13
+	openssl enc -aes-256-cbc -salt -in $Input13 -out $Input13.enc
+	read -p "File encrypted. To view, enter y " Input12
+	if [ "$Input12" = "y" ]
+	then 
+		vim $Input13.enc
+	fi
+	read -p "Would you like to decrypt?(Y/N) " Input14
+	if [ "$Input14" = "y" ]
+	then
+		openssl enc -d -aes-256-cbc -in $Input13.enc -out $Input13 &> /dev/null
+	fi
+	read -p "File decrypted. To view, enter y " Input15
+	if [ "$Input15" = "y" ]
+	then
+		vim $Input13
+	fi
+}
+
 while
 
-	echo "To check if local repo is up to date with remote repo, enter 1"
-	echo "To put all uncomitted changes in changes.log, enter 2"
-	echo "To put each line from every file of your project with the tag #TODO into a file todo.log, enter 3"
-	echo "To check all haskell files for syntax errors and put the results into error.log, enter 4"
-	echo "To see the differences between local and remote repo, enter 5"
-	echo "In case you forgot find out who you are, where you are and what time it is by entering 6"
-	echo "To find any file and modify its permissions, enter 7"
+	echo "To check if local repo is up to date with remote repo, enter 1 "
+	echo "To put all uncomitted changes in changes.log, enter 2 "
+	echo "To put each line from every file of your project with the tag #TODO into a file todo.log, enter 3 "
+	echo "To check all haskell files for syntax errors and put the results into error.log, enter 4 "
+	echo "To see the differences between local and remote repo, enter 5 "
+	echo "In case you forgot find out who you are, where you are and what time it is by entering 6 "
+	echo "To find any file and modify its permissions, enter 7 "
+	echo "To encrypt a file, enter 8 "
 	
 	read Input1
 
@@ -146,6 +167,9 @@ while
 	elif [ "$Input1" == "7" ]
 	then
 		permissions
+	elif [ "$Input1" == "8" ]
+	then
+		encrypt
 	fi
 	read -p "Would you like to continue (Y/N): " Input
 	[ "$Input" = "y" ]
