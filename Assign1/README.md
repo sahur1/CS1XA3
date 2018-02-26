@@ -25,7 +25,10 @@ Allows you to find any file and modify its permissions.
 
 ###### 4. encrypt:
 Allows you to encrypt a file and lets you decrypt it if you wish. It uses 256-bit AES encryption with Cipher Block Chaining (CBC).
-Note: This function will only work if you have *OpenSSl* installed.
+
+Note: 
+- This function will only work if you have *OpenSSL* installed.
+- Information on encryption and decryption was found here: https://www.madboa.com/geek/openssl/#encrypt-simple
 
 ### General Features
 - A rudimentary menu simplifies usage.
