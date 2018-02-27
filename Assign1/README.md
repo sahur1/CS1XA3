@@ -11,7 +11,7 @@ Stores all uncommited changes in changes.log.
 Searches all files for lines containing #TODO and puts them in todo.log.
 
 ###### 4. haskell_errors:
-Searches for all haskell files in the project and compiles them to test for errors which are then stored in error.log.
+Searches for all haskell files in the project and compiles them to test for errors which are then stored in error.log. If a haskell file doesn't have a main function, it adds a main function temporarily.
 
 ### Additional Features
 ###### 1. diffs:
