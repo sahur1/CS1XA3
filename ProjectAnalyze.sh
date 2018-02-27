@@ -29,7 +29,7 @@ changes(){
 }
 
 todo(){
-	grep -r --exclude={todo.log,ProjectAnalyze.sh} "#TODO" . > "todo.log"
+	grep -r --exclude={todo.log,ProjectAnalyze.sh,changes.log} "#TODO" . > "todo.log"
 	read -p "To view todo.log, enter y" Input3
 	if [ "$Input3" == "y" ]
 	then 
@@ -38,12 +38,30 @@ todo(){
 }
 
 haskell_errors(){
+	find . -name '*.hs' -print0 | 
+		while IFS= read -r -d $'\0' file 
+		do 
+			main=$(grep "main" "$file" | wc -l) 
+			if [ $main -lt 1 ]
+			then 
+			echo "main = undefined" >> $file
+			fi
+		done
 	find . -name "*.hs" -type f -exec ghc -fno-code {} \; 2> error.log
 	read -p "To view error.log, enter y" Input4
 	if [ "$Input4" == "y" ]
 	then
 		cat error.log
 	fi
+	find . -name '*.hs' -print0 | 
+		while IFS= read -r -d $'\0' file 
+		do 
+			main=$(grep "main = undefined" "$file" | wc -l) 
+			if [ $main -eq 1 ]
+			then
+			sed -i '$d' $file
+			fi
+		done
 }
 
 diffs(){
@@ -126,6 +144,7 @@ encrypt(){
 	then
 		openssl enc -d -aes-256-cbc -in $Input13.enc -out $Input13 &> /dev/null
 	fi
+	sed -i '$d' $Input13
 	read -p "File decrypted. To view, enter y " Input15
 	if [ "$Input15" = "y" ]
 	then
