@@ -28,6 +28,8 @@ type alias Game = {
                   ,blockSize : Float
                   ,bulletPosition : Coords
                   ,momentumSpeedCounter : Int
+                  ,bulletMove : Bool
+                  ,bulletFire : Bool
                   }
 
 type Direction = Left | Right | NoDirection
@@ -47,12 +49,16 @@ init = ({   dimensions = Window.Size 0 0,
             isDead = False,
             blockSize = 0,
             momentumSpeedCounter = 0,
-            bulletPosition = {x = 380, y = 380}})
+            bulletPosition = {x = 404, y = 391},
+            bulletMove = False,
+            bulletFire = True})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
         KeyMsg keyCode ->
-            movePos keyCode model
+            (keyCode, model)
+            |> movePos
+            |> fire
 
         SizeUpdated dimensions ->
             ({ model | dimensions = dimensions }, Cmd.none )
@@ -62,12 +68,28 @@ update msg model = case msg of
         Tick time ->
             updateGame (model, Cmd.none)
 
-movePos : Int -> Game -> (Game, Cmd.Cmd Msg)
-movePos keyCode model =
+movePos : (Int, Game) -> (Int, Game, Cmd.Cmd Msg)
+movePos (keyCode, model) =
     case keyCode of
-      65 -> ({ model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4 }, Cmd.none)
-      68 -> ({ model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4 }, Cmd.none)
-      _ -> (model, Cmd.none)
+      65 -> (keyCode, { model | previousDirection = model.direction, direction = Left, momentumSpeedCounter = -4}, Cmd.none)
+      68 -> (keyCode, { model | previousDirection = model.direction, direction = Right, momentumSpeedCounter = 4}, Cmd.none)
+      _ -> (keyCode, model, Cmd.none)
+
+fire : (Int, Game, Cmd.Cmd Msg) -> (Game, Cmd.Cmd Msg)
+fire (keyCode, model, cmd) =
+  if ((keyCode == 32) && (model.bulletFire)) then ({ model | bulletMove = True, bulletFire = False, bulletPosition = {x = model.position.x + 24, y = model.position.y}}, Cmd.none)
+  else (model, Cmd.none)
+
+movBpos : (Game , Cmd Msg ) -> ( Game , Cmd Msg )
+movBpos ( model, cmd) =
+  if (model.bulletMove == True) && (model.bulletFire == False)
+    then ( { model | bulletPosition = {x = model.bulletPosition.x, y = model.bulletPosition.y - 15}}, Cmd.none)
+  else ( model, Cmd.none)
+
+bulletReset : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
+bulletReset ( model, cmd ) =
+  if model.bulletPosition.y < 0 then ({ model | bulletMove = False, bulletFire = True}, Cmd.none)
+  else (model, Cmd.none)
 
 updateGame : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
 updateGame ( model, cmd ) =
@@ -75,8 +97,10 @@ updateGame ( model, cmd ) =
             |> blockSize
             |> momentum
             |> updateDirection
+            |> bulletReset
             |> outOfScreen
             |> movBpos
+            |> bulletReset
 
 blockSize : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
 blockSize ( model, cmd ) =
@@ -86,9 +110,6 @@ blockSize ( model, cmd ) =
 updateDirection : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 updateDirection ( model , cmd )= ({ model | previousDirection = model.direction, direction = model.direction }, Cmd.none)
 
-movBpos : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-movBpos ( model, cmd ) =
-  ( { model | bulletPosition = {x = model.bulletPosition.x, y = model.bulletPosition.y - 5}}, Cmd.none)
 
 momentum : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 momentum ( model , cmd ) =
@@ -150,8 +171,9 @@ scale size =
 winWidth : Window.Size -> Int
 winWidth size = size.width
 
+
 outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-outOfScreen ( model , cmd) =
+outOfScreen ( model , cmd ) =
         if model.position.x > 700 then
             ({ model | position = { x = 700, y = model.position.y} }, Cmd.none)
         else if model.position.x < 50 then
@@ -176,8 +198,8 @@ view model = let
         if model.isDead == False then
             svg [width "100%",height "100%"]
               ([ renderBackground model ]
+              ++ [rect [x posBX,y posBY, width (toString(2*bs)), height (toString(10*bs)), fill "red"] []]
               ++ [image [x posX, y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref pimage][]]
-              ++ [rect [x posBX,y posBY, width (toString(50*bs)), height (toString(50*bs)), fill "red"] []]
               )
 
         else
