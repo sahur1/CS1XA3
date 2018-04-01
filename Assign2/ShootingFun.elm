@@ -22,6 +22,7 @@ main = Html.program
 type alias Game = {
                    dimensions : Window.Size
                   ,position : Coords
+                  ,monsters : List Coords
                   ,isDead : Bool
                   ,direction : Direction
                   ,previousDirection: Direction
@@ -44,6 +45,7 @@ type Msg
 
 init = ({   dimensions = Window.Size 0 0,
             position = {x = 380, y = 380},
+            monsters = [{x = 80, y = 50},{x = 110, y = 50},{x = 140, y = 50},{x = 170, y = 50},{x = 200, y = 50},{x = 230, y = 50},{x = 260, y = 50},{x = 290, y = 50}],
             direction = NoDirection,
             previousDirection = NoDirection,
             isDead = False,
@@ -151,6 +153,16 @@ speedConversion model =
     else if model.momentumSpeedCounter == 7 then 3
     else 0
 
+drawMonster : Coords -> Svg Msg
+drawMonster coord =
+  let
+    mimage = "./monster.png"
+    posX = toString (toFloat coord.x * model.blockSize)
+    posY = toString (toFloat coord.y * model.blockSize)
+  in
+    [image [x posX ,y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref mimage] []]
+
+
 scale : Window.Size -> ( String, String )
 scale size =
     let
@@ -193,13 +205,17 @@ view model = let
         ( scaledWidth, scaledHeight ) = scale model.dimensions
         bs = model.blockSize
         pimage = "./player.png"
+        mimage = "./monster.png"
 
     in
         if model.isDead == False then
             svg [width "100%",height "100%"]
               ([ renderBackground model ]
+              ++ [monster model]
               ++ [rect [x posBX,y posBY, width (toString(2*bs)), height (toString(10*bs)), fill "red"] []]
               ++ [image [x posX, y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref pimage][]]
+              ++ [image [x (toString (model.monsters.x)) ,y (toString (model.monsters.y)), width (toString(50*bs)), height (toString(5 0*bs)), Svg.Attributes.xlinkHref mimage] []]
+              ++ fmap drawMonster monsters
               )
 
         else
