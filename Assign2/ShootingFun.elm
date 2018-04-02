@@ -10,6 +10,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Task
 import Time as Time
+import Random
 
 {- Main -}
 main : Program Never Game Msg
@@ -45,7 +46,9 @@ type Msg
 
 init = ({   dimensions = Window.Size 0 0,
             position = {x = 380, y = 380},
-            monsters = [{x = 80, y = 50},{x = 110, y = 50},{x = 140, y = 50},{x = 170, y = 50},{x = 200, y = 50},{x = 230, y = 50},{x = 260, y = 50},{x = 290, y = 50}],
+            monsters = [{x = 80, y = 50},{x = 160, y = 50},{x = 240, y = 50},{x = 320, y = 50},{x = 400, y = 50},{x = 480, y = 50},{x = 560, y = 50},{x = 640, y = 50},
+            {x = 80, y = 100},{x = 160, y = 100},{x = 240, y = 100},{x = 320, y = 100},{x = 400, y = 100},{x = 480, y = 100},{x = 560, y = 100},{x = 640, y = 100}],
+            --monster = {x=70,y=300},
             direction = NoDirection,
             previousDirection = NoDirection,
             isDead = False,
@@ -69,6 +72,21 @@ update msg model = case msg of
 
         Tick time ->
             updateGame (model, Cmd.none)
+
+collision : ( Game , Cmd Msg ) -> Coords -> ( Game , Cmd Msg )
+collision ( model, cmd ) coord =
+  if ((abs(model.bulletPosition.x - (coord.x + 20)) <= 21) && (abs(model.bulletPosition.y - (coord.y+5)) <= 20)) then
+    ({ model | isDead = True}, Cmd.none)
+  else (model, Cmd.none)
+
+
+
+{-
+monsterMove : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+monsterMove ( model, cmd)  =
+
+  ( { model | monster = {x = model.monster.x + 2 , y = model.monster.y}}, Cmd.none)
+-}
 
 movePos : (Int, Game) -> (Int, Game, Cmd.Cmd Msg)
 movePos (keyCode, model) =
@@ -101,8 +119,10 @@ updateGame ( model, cmd ) =
             |> updateDirection
             |> bulletReset
             |> outOfScreen
+            --|> outOfScreenM
             |> movBpos
-            |> bulletReset
+            --|> (List.map (collision (model, cmd)) model.monsters)
+            --|> monsterMove
 
 blockSize : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
 blockSize ( model, cmd ) =
@@ -153,14 +173,16 @@ speedConversion model =
     else if model.momentumSpeedCounter == 7 then 3
     else 0
 
-drawMonster : Coords -> Svg Msg
-drawMonster coord =
+drawMonster : Game -> Coords -> Svg Msg
+drawMonster model coord =
   let
+    bs = model.blockSize
     mimage = "./monster.png"
-    posX = toString (toFloat coord.x * model.blockSize)
-    posY = toString (toFloat coord.y * model.blockSize)
+    posX = toString ((toFloat coord.x) * bs)
+    posY = toString ((toFloat coord.y) * bs)
+
   in
-    [image [x posX ,y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref mimage] []]
+    (image [x posX ,y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref mimage] [])
 
 
 scale : Window.Size -> ( String, String )
@@ -182,8 +204,13 @@ scale size =
 
 winWidth : Window.Size -> Int
 winWidth size = size.width
-
-
+{-
+collision : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+collision ( model, cmd ) =
+  if (model.bulletPosition.x - model.monster.x <= 10) && (model.bulletPosition.y - model.monster.y <= 10) then
+    ({ model | isDead = True}, Cmd.none)
+  else (model, Cmd.none)
+-}
 outOfScreen : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
 outOfScreen ( model , cmd ) =
         if model.position.x > 700 then
@@ -191,7 +218,13 @@ outOfScreen ( model , cmd ) =
         else if model.position.x < 50 then
             ({ model | position = { x = 50, y = model.position.y} }, Cmd.none)
         else ({ model | position = { x = model.position.x, y = model.position.y } }, Cmd.none)
-
+{-
+outOfScreenM : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
+outOfScreenM ( model , cmd ) =
+        if model.monster.x > 800 then
+          ({ model | monster = { x = 0, y = model.monster.y} }, Cmd.none)
+        else (model, Cmd.none)
+-}
 backgroundColor : Attribute Msg
 backgroundColor =
     fill "Black"
@@ -211,11 +244,10 @@ view model = let
         if model.isDead == False then
             svg [width "100%",height "100%"]
               ([ renderBackground model ]
-              ++ [monster model]
               ++ [rect [x posBX,y posBY, width (toString(2*bs)), height (toString(10*bs)), fill "red"] []]
               ++ [image [x posX, y posY, width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref pimage][]]
-              ++ [image [x (toString (model.monsters.x)) ,y (toString (model.monsters.y)), width (toString(50*bs)), height (toString(5 0*bs)), Svg.Attributes.xlinkHref mimage] []]
-              ++ fmap drawMonster monsters
+              --++ [image [x (toString ((toFloat(model.monster.x))*bs)), y (toString ((toFloat(model.monster.y))*bs)), width (toString(50*bs)), height (toString(50*bs)), Svg.Attributes.xlinkHref mimage] []]
+              ++ (List.map (drawMonster model) model.monsters)
               )
 
         else
