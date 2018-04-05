@@ -11,6 +11,7 @@ import Svg.Attributes exposing (..)
 import Task
 import Time as Time
 import Random
+import Html.Events exposing (onClick)
 
 {- Main -}
 main : Program Never Game Msg
@@ -32,6 +33,9 @@ type alias Game = {
                   ,momentumSpeedCounter : Int
                   ,bulletMove : Bool
                   ,bulletFire : Bool
+                  ,moveTurn : Int
+                  ,screen : Int
+                  ,win : Bool
                   }
 
 type Direction = Left | Right | NoDirection
@@ -43,23 +47,31 @@ type Msg
     | SizeUpdated Window.Size
     | Tick Time.Time
     | Nothing
+    | StartGame
 
 init = ({   dimensions = Window.Size 0 0,
             position = {x = 380, y = 380},
             monsters = [{x = 80, y = 50},{x = 160, y = 50},{x = 240, y = 50},{x = 320, y = 50},{x = 400, y = 50},{x = 480, y = 50},{x = 560, y = 50},{x = 640, y = 50},
-            {x = 80, y = 100},{x = 160, y = 100},{x = 240, y = 100},{x = 320, y = 100},{x = 400, y = 100},{x = 480, y = 100},{x = 560, y = 100},{x = 640, y = 100}],
+            {x = 120, y = 100},{x = 200, y = 100},{x = 280, y = 100},{x = 360, y = 100},{x = 440, y = 100},{x = 520, y = 100},{x = 600, y = 100}],
             --monster = {x=70,y=300},
             direction = NoDirection,
             previousDirection = NoDirection,
             isDead = False,
             blockSize = 0,
             momentumSpeedCounter = 0,
-            bulletPosition = {x = 404, y = 391},
+            bulletPosition = {x = 2000, y = 391},
             bulletMove = False,
-            bulletFire = True})
+            bulletFire = True,
+            moveTurn = 0,
+            screen = 0,
+            win = False})
 
 update : Msg -> Game -> (Game,Cmd.Cmd Msg)
 update msg model = case msg of
+        StartGame -> ({model | screen = 1, position = {x = 380, y = 380},
+        monsters = [{x = 80, y = 50},{x = 160, y = 50},{x = 240, y = 50},{x = 320, y = 50},{x = 400, y = 50},{x = 480, y = 50},{x = 560, y = 50},{x = 640, y = 50},
+        {x = 120, y = 100},{x = 200, y = 100},{x = 280, y = 100},{x = 360, y = 100},{x = 440, y = 100},{x = 520, y = 100},{x = 600, y = 100}],win = False}, Cmd.none)
+
         KeyMsg keyCode ->
             (keyCode, model)
             |> movePos
@@ -72,21 +84,88 @@ update msg model = case msg of
 
         Tick time ->
             updateGame (model, Cmd.none)
-
+{-
 collision : ( Game , Cmd Msg ) -> Coords -> ( Game , Cmd Msg )
 collision ( model, cmd ) coord =
   if ((abs(model.bulletPosition.x - (coord.x + 20)) <= 21) && (abs(model.bulletPosition.y - (coord.y+5)) <= 20)) then
     ({ model | isDead = True}, Cmd.none)
   else (model, Cmd.none)
+  -}
+
+checkOutcome : Game -> Coords -> Bool
+checkOutcome model coords =
+    if coords.x == -1000 then True
+    else False
+
+masterCheckOutcome : ( Game , Cmd Msg ) -> ( Game , Cmd Msg)
+masterCheckOutcome (model, cmd) =
+  if List.all (checkOutcome model) model.monsters then
+    ({model | screen = 2, win = True }, Cmd.none)
+  else (model, Cmd.none)
+
+mapCollision : ( Game , Cmd Msg ) -> ( Game , Cmd Msg)
+mapCollision ( model, cmd ) =
+  ( { model | monsters = (List.map (collision model) model.monsters) }, Cmd.none )
+
+collision : Game -> Coords -> Coords
+collision model coords =
+  let
+    mx = coords.x
+    my = coords.y
+    bx = model.bulletPosition.x
+    by = model.bulletPosition.y
+  in
+    if ((abs(mx + 21 - bx)) < 17) then
+      if (by < my) && ((my - by) < 30) then
+        {x = -1000, y = -1000}
+      else coords
+    else coords
 
 
+monsterMove : Game -> Coords -> Coords
+monsterMove model coords  =
+  {x = coords.x, y = coords.y + 1}
 
+mapMonsterMove : ( Game, Cmd Msg ) -> ( Game )
+mapMonsterMove ( model, cmd ) =
+  ( { model | monsters = (List.map (monsterMove model) model.monsters) })
+
+masterMonsterMove : ( Game, Cmd Msg ) -> ( Game , Cmd Msg )
+masterMonsterMove ( model, cmd ) =
+  let
+    mapModel = if model.moveTurn == 2 then
+      mapMonsterMove (model, cmd)
+    else (model)
+
+    reset = if model.moveTurn == 2 then
+      ({mapModel | moveTurn = 0}, Cmd.none)
+    else ({mapModel | moveTurn = model.moveTurn + 1}, Cmd.none)
+
+  in
+    reset
+
+death : Game -> Coords -> Bool
+death model coords =
+    if coords.y > 355 then True
+    else False
 {-
-monsterMove : ( Game , Cmd Msg ) -> ( Game , Cmd Msg )
-monsterMove ( model, cmd)  =
+death : Game -> Coords -> Coords
+death model coords =
+    if coords.y > 380 then
+      {x = 2000, y=coords.y}
 
-  ( { model | monster = {x = model.monster.x + 2 , y = model.monster.y}}, Cmd.none)
+
+mapDeath : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+mapDeath ( model, cmd ) =
+  ( { model | monsters = (List.map (death model) model.monsters) }, Cmd.none )
 -}
+
+masterDeath : ( Game , Cmd Msg ) -> ( Game, Cmd Msg )
+masterDeath ( model, cmd ) =
+  if List.any (death model) model.monsters then
+    ({model | screen = 2 }, Cmd.none)
+  else (model, Cmd.none)
+
 
 movePos : (Int, Game) -> (Int, Game, Cmd.Cmd Msg)
 movePos (keyCode, model) =
@@ -121,8 +200,13 @@ updateGame ( model, cmd ) =
             |> outOfScreen
             --|> outOfScreenM
             |> movBpos
+            |> mapCollision
             --|> (List.map (collision (model, cmd)) model.monsters)
             --|> monsterMove
+            --|> mapMonsterMove
+            |> masterMonsterMove
+            |> masterDeath
+            |> masterCheckOutcome
 
 blockSize : ( Game, Cmd Msg ) -> ( Game, Cmd Msg )
 blockSize ( model, cmd ) =
@@ -225,12 +309,23 @@ outOfScreenM ( model , cmd ) =
           ({ model | monster = { x = 0, y = model.monster.y} }, Cmd.none)
         else (model, Cmd.none)
 -}
+
 backgroundColor : Attribute Msg
 backgroundColor =
     fill "Black"
 
 view : Game -> Html.Html Msg
-view model = let
+view model =
+
+  if model.screen == 0 then
+            Html.div []
+            [ Html.button [ onClick StartGame ] [ text "Click here to play" ]
+            , text "   Instructions: Use keys A to move left, D to move right and space to shoot"
+            , text "   Objective: Kill the monsters from space before they invade your home"
+            ]
+
+  else if model.screen == 1 then
+      let
         posX = toString (toFloat model.position.x * model.blockSize)
         posY = toString (toFloat model.position.y * model.blockSize)
         posBX = toString (toFloat model.bulletPosition.x * model.blockSize)
@@ -240,8 +335,7 @@ view model = let
         pimage = "./player.png"
         mimage = "./monster.png"
 
-    in
-        if model.isDead == False then
+       in
             svg [width "100%",height "100%"]
               ([ renderBackground model ]
               ++ [rect [x posBX,y posBY, width (toString(2*bs)), height (toString(10*bs)), fill "red"] []]
@@ -250,10 +344,17 @@ view model = let
               ++ (List.map (drawMonster model) model.monsters)
               )
 
-        else
-            svg [width "0%",height "0%"]
-              (
-              [rect [x "posX",y "posY", width "50", height "50", fill "red"] []])
+  else
+    if model.win == True then
+      Html.div []
+      [ text "Congratulations! You fended off the invaders this time."
+      , Html.button [ onClick StartGame ] [ text "Click here to play again" ]
+      ]
+    else
+      Html.div []
+      [ text "Alas! You weren't able to stop the invaders."
+      , Html.button [ onClick StartGame ] [ text "Click here to try your luck again" ]
+      ]
 
 renderBackground : Game -> Svg Msg
 renderBackground model =

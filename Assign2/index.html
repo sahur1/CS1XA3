@@ -9091,6 +9091,120 @@ var _elm_lang$html$Html_Attributes$classList = function (list) {
 				A2(_elm_lang$core$List$filter, _elm_lang$core$Tuple$second, list))));
 };
 var _elm_lang$html$Html_Attributes$style = _elm_lang$virtual_dom$VirtualDom$style;
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
 var _elm_lang$keyboard$Keyboard$onSelfMsg = F3(
 	function (router, _p0, state) {
 		var _p1 = _p0;
@@ -9833,229 +9947,171 @@ var _user$project$ShootingFun$drawMonster = F2(
 			},
 			{ctor: '[]'});
 	});
-var _user$project$ShootingFun$view = function (model) {
-	var mimage = './monster.png';
-	var pimage = './player.png';
-	var bs = model.blockSize;
-	var _p5 = _user$project$ShootingFun$scale(model.dimensions);
-	var scaledWidth = _p5._0;
-	var scaledHeight = _p5._1;
-	var posBY = _elm_lang$core$Basics$toString(
-		_elm_lang$core$Basics$toFloat(model.bulletPosition.y) * model.blockSize);
-	var posBX = _elm_lang$core$Basics$toString(
-		_elm_lang$core$Basics$toFloat(model.bulletPosition.x) * model.blockSize);
-	var posY = _elm_lang$core$Basics$toString(
-		_elm_lang$core$Basics$toFloat(model.position.y) * model.blockSize);
-	var posX = _elm_lang$core$Basics$toString(
-		_elm_lang$core$Basics$toFloat(model.position.x) * model.blockSize);
-	return _elm_lang$core$Native_Utils.eq(model.isDead, false) ? A2(
-		_elm_lang$svg$Svg$svg,
-		{
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$width('100%'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$height('100%'),
-				_1: {ctor: '[]'}
-			}
-		},
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			{
-				ctor: '::',
-				_0: _user$project$ShootingFun$renderBackground(model),
-				_1: {ctor: '[]'}
-			},
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$svg$Svg$rect,
-						{
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$x(posBX),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$y(posBY),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$width(
-										_elm_lang$core$Basics$toString(2 * bs)),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$height(
-											_elm_lang$core$Basics$toString(10 * bs)),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$fill('red'),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {ctor: '[]'}
-				},
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$svg$Svg$image,
-							{
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$x(posX),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$y(posY),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$width(
-											_elm_lang$core$Basics$toString(50 * bs)),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$height(
-												_elm_lang$core$Basics$toString(50 * bs)),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$xlinkHref(pimage),
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}
-							},
-							{ctor: '[]'}),
-						_1: {ctor: '[]'}
-					},
-					A2(
-						_elm_lang$core$List$map,
-						_user$project$ShootingFun$drawMonster(model),
-						model.monsters))))) : A2(
-		_elm_lang$svg$Svg$svg,
-		{
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$width('0%'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$height('0%'),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$svg$Svg$rect,
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$x('posX'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$y('posY'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$width('50'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$height('50'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$fill('red'),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		});
-};
 var _user$project$ShootingFun$speedConversion = function (model) {
 	return _elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -7) ? 3 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -6) ? 6 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -5) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -4) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -3) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -2) ? 6 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, -1) ? 3 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 0) ? 0 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 1) ? 3 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 2) ? 6 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 3) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 4) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 5) ? 9 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 6) ? 6 : (_elm_lang$core$Native_Utils.eq(model.momentumSpeedCounter, 7) ? 3 : 0))))))))))))));
 };
-var _user$project$ShootingFun$updateDirection = function (_p6) {
-	var _p7 = _p6;
-	var _p8 = _p7._0;
+var _user$project$ShootingFun$updateDirection = function (_p5) {
+	var _p6 = _p5;
+	var _p7 = _p6._0;
 	return {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p8,
-			{previousDirection: _p8.direction, direction: _p8.direction}),
+			_p7,
+			{previousDirection: _p7.direction, direction: _p7.direction}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
-var _user$project$ShootingFun$blockSize = function (_p9) {
-	var _p10 = _p9;
-	var _p11 = _p10._0;
+var _user$project$ShootingFun$blockSize = function (_p8) {
+	var _p9 = _p8;
+	var _p10 = _p9._0;
 	return {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p11,
+			_p10,
 			{
 				blockSize: _elm_lang$core$Basics$toFloat(
-					_user$project$ShootingFun$winWidth(_p11.dimensions)) / 800.0
+					_user$project$ShootingFun$winWidth(_p10.dimensions)) / 800.0
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	};
 };
-var _user$project$ShootingFun$bulletReset = function (_p12) {
-	var _p13 = _p12;
-	var _p14 = _p13._0;
-	return (_elm_lang$core$Native_Utils.cmp(_p14.bulletPosition.y, 0) < 0) ? {
+var _user$project$ShootingFun$bulletReset = function (_p11) {
+	var _p12 = _p11;
+	var _p13 = _p12._0;
+	return (_elm_lang$core$Native_Utils.cmp(_p13.bulletPosition.y, 0) < 0) ? {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p14,
+			_p13,
 			{bulletMove: false, bulletFire: true}),
 		_1: _elm_lang$core$Platform_Cmd$none
-	} : {ctor: '_Tuple2', _0: _p14, _1: _elm_lang$core$Platform_Cmd$none};
+	} : {ctor: '_Tuple2', _0: _p13, _1: _elm_lang$core$Platform_Cmd$none};
 };
-var _user$project$ShootingFun$movBpos = function (_p15) {
-	var _p16 = _p15;
-	var _p17 = _p16._0;
-	return (_elm_lang$core$Native_Utils.eq(_p17.bulletMove, true) && _elm_lang$core$Native_Utils.eq(_p17.bulletFire, false)) ? {
+var _user$project$ShootingFun$movBpos = function (_p14) {
+	var _p15 = _p14;
+	var _p16 = _p15._0;
+	return (_elm_lang$core$Native_Utils.eq(_p16.bulletMove, true) && _elm_lang$core$Native_Utils.eq(_p16.bulletFire, false)) ? {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p17,
+			_p16,
 			{
-				bulletPosition: {x: _p17.bulletPosition.x, y: _p17.bulletPosition.y - 15}
+				bulletPosition: {x: _p16.bulletPosition.x, y: _p16.bulletPosition.y - 15}
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
-	} : {ctor: '_Tuple2', _0: _p17, _1: _elm_lang$core$Platform_Cmd$none};
+	} : {ctor: '_Tuple2', _0: _p16, _1: _elm_lang$core$Platform_Cmd$none};
 };
-var _user$project$ShootingFun$fire = function (_p18) {
-	var _p19 = _p18;
-	var _p20 = _p19._1;
-	return (_elm_lang$core$Native_Utils.eq(_p19._0, 32) && _p20.bulletFire) ? {
+var _user$project$ShootingFun$fire = function (_p17) {
+	var _p18 = _p17;
+	var _p19 = _p18._1;
+	return (_elm_lang$core$Native_Utils.eq(_p18._0, 32) && _p19.bulletFire) ? {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p20,
+			_p19,
 			{
 				bulletMove: true,
 				bulletFire: false,
-				bulletPosition: {x: _p20.position.x + 24, y: _p20.position.y}
+				bulletPosition: {x: _p19.position.x + 24, y: _p19.position.y}
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
-	} : {ctor: '_Tuple2', _0: _p20, _1: _elm_lang$core$Platform_Cmd$none};
+	} : {ctor: '_Tuple2', _0: _p19, _1: _elm_lang$core$Platform_Cmd$none};
+};
+var _user$project$ShootingFun$death = F2(
+	function (model, coords) {
+		return (_elm_lang$core$Native_Utils.cmp(coords.y, 355) > 0) ? true : false;
+	});
+var _user$project$ShootingFun$masterDeath = function (_p20) {
+	var _p21 = _p20;
+	var _p22 = _p21._0;
+	return A2(
+		_elm_lang$core$List$any,
+		_user$project$ShootingFun$death(_p22),
+		_p22.monsters) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p22,
+			{screen: 2}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {ctor: '_Tuple2', _0: _p22, _1: _elm_lang$core$Platform_Cmd$none};
+};
+var _user$project$ShootingFun$monsterMove = F2(
+	function (model, coords) {
+		return {x: coords.x, y: coords.y + 1};
+	});
+var _user$project$ShootingFun$mapMonsterMove = function (_p23) {
+	var _p24 = _p23;
+	var _p25 = _p24._0;
+	return _elm_lang$core$Native_Utils.update(
+		_p25,
+		{
+			monsters: A2(
+				_elm_lang$core$List$map,
+				_user$project$ShootingFun$monsterMove(_p25),
+				_p25.monsters)
+		});
+};
+var _user$project$ShootingFun$masterMonsterMove = function (_p26) {
+	var _p27 = _p26;
+	var _p28 = _p27._0;
+	var mapModel = _elm_lang$core$Native_Utils.eq(_p28.moveTurn, 2) ? _user$project$ShootingFun$mapMonsterMove(
+		{ctor: '_Tuple2', _0: _p28, _1: _p27._1}) : _p28;
+	var reset = _elm_lang$core$Native_Utils.eq(_p28.moveTurn, 2) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			mapModel,
+			{moveTurn: 0}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			mapModel,
+			{moveTurn: _p28.moveTurn + 1}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+	return reset;
 };
 var _user$project$ShootingFun$collision = F2(
-	function (_p21, coord) {
-		var _p22 = _p21;
-		var _p23 = _p22._0;
-		return ((_elm_lang$core$Native_Utils.cmp(
-			_elm_lang$core$Basics$abs(_p23.bulletPosition.x - (coord.x + 20)),
-			21) < 1) && (_elm_lang$core$Native_Utils.cmp(
-			_elm_lang$core$Basics$abs(_p23.bulletPosition.y - (coord.y + 5)),
-			20) < 1)) ? {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				_p23,
-				{isDead: true}),
-			_1: _elm_lang$core$Platform_Cmd$none
-		} : {ctor: '_Tuple2', _0: _p23, _1: _elm_lang$core$Platform_Cmd$none};
+	function (model, coords) {
+		var by = model.bulletPosition.y;
+		var bx = model.bulletPosition.x;
+		var my = coords.y;
+		var mx = coords.x;
+		return (_elm_lang$core$Native_Utils.cmp(
+			_elm_lang$core$Basics$abs((mx + 21) - bx),
+			17) < 0) ? (((_elm_lang$core$Native_Utils.cmp(by, my) < 0) && (_elm_lang$core$Native_Utils.cmp(my - by, 30) < 0)) ? {x: -1000, y: -1000} : coords) : coords;
 	});
+var _user$project$ShootingFun$mapCollision = function (_p29) {
+	var _p30 = _p29;
+	var _p31 = _p30._0;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p31,
+			{
+				monsters: A2(
+					_elm_lang$core$List$map,
+					_user$project$ShootingFun$collision(_p31),
+					_p31.monsters)
+			}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+var _user$project$ShootingFun$checkOutcome = F2(
+	function (model, coords) {
+		return _elm_lang$core$Native_Utils.eq(coords.x, -1000) ? true : false;
+	});
+var _user$project$ShootingFun$masterCheckOutcome = function (_p32) {
+	var _p33 = _p32;
+	var _p34 = _p33._0;
+	return A2(
+		_elm_lang$core$List$all,
+		_user$project$ShootingFun$checkOutcome(_p34),
+		_p34.monsters) ? {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p34,
+			{screen: 2, win: true}),
+		_1: _elm_lang$core$Platform_Cmd$none
+	} : {ctor: '_Tuple2', _0: _p34, _1: _elm_lang$core$Platform_Cmd$none};
+};
 var _user$project$ShootingFun$Game = function (a) {
 	return function (b) {
 		return function (c) {
@@ -10067,7 +10123,13 @@ var _user$project$ShootingFun$Game = function (a) {
 								return function (i) {
 									return function (j) {
 										return function (k) {
-											return {dimensions: a, position: b, monsters: c, isDead: d, direction: e, previousDirection: f, blockSize: g, bulletPosition: h, momentumSpeedCounter: i, bulletMove: j, bulletFire: k};
+											return function (l) {
+												return function (m) {
+													return function (n) {
+														return {dimensions: a, position: b, monsters: c, isDead: d, direction: e, previousDirection: f, blockSize: g, bulletPosition: h, momentumSpeedCounter: i, bulletMove: j, bulletFire: k, moveTurn: l, screen: m, win: n};
+													};
+												};
+											};
 										};
 									};
 								};
@@ -10113,30 +10175,26 @@ var _user$project$ShootingFun$init = {
 									_0: {x: 640, y: 50},
 									_1: {
 										ctor: '::',
-										_0: {x: 80, y: 100},
+										_0: {x: 120, y: 100},
 										_1: {
 											ctor: '::',
-											_0: {x: 160, y: 100},
+											_0: {x: 200, y: 100},
 											_1: {
 												ctor: '::',
-												_0: {x: 240, y: 100},
+												_0: {x: 280, y: 100},
 												_1: {
 													ctor: '::',
-													_0: {x: 320, y: 100},
+													_0: {x: 360, y: 100},
 													_1: {
 														ctor: '::',
-														_0: {x: 400, y: 100},
+														_0: {x: 440, y: 100},
 														_1: {
 															ctor: '::',
-															_0: {x: 480, y: 100},
+															_0: {x: 520, y: 100},
 															_1: {
 																ctor: '::',
-																_0: {x: 560, y: 100},
-																_1: {
-																	ctor: '::',
-																	_0: {x: 640, y: 100},
-																	_1: {ctor: '[]'}
-																}
+																_0: {x: 600, y: 100},
+																_1: {ctor: '[]'}
 															}
 														}
 													}
@@ -10157,99 +10215,179 @@ var _user$project$ShootingFun$init = {
 	isDead: false,
 	blockSize: 0,
 	momentumSpeedCounter: 0,
-	bulletPosition: {x: 404, y: 391},
+	bulletPosition: {x: 2000, y: 391},
 	bulletMove: false,
-	bulletFire: true
+	bulletFire: true,
+	moveTurn: 0,
+	screen: 0,
+	win: false
 };
 var _user$project$ShootingFun$Right = {ctor: 'Right'};
 var _user$project$ShootingFun$Left = {ctor: 'Left'};
-var _user$project$ShootingFun$movePos = function (_p24) {
-	var _p25 = _p24;
-	var _p28 = _p25._1;
-	var _p27 = _p25._0;
-	var _p26 = _p27;
-	switch (_p26) {
+var _user$project$ShootingFun$movePos = function (_p35) {
+	var _p36 = _p35;
+	var _p39 = _p36._1;
+	var _p38 = _p36._0;
+	var _p37 = _p38;
+	switch (_p37) {
 		case 65:
 			return {
 				ctor: '_Tuple3',
-				_0: _p27,
+				_0: _p38,
 				_1: _elm_lang$core$Native_Utils.update(
-					_p28,
-					{previousDirection: _p28.direction, direction: _user$project$ShootingFun$Left, momentumSpeedCounter: -4}),
+					_p39,
+					{previousDirection: _p39.direction, direction: _user$project$ShootingFun$Left, momentumSpeedCounter: -4}),
 				_2: _elm_lang$core$Platform_Cmd$none
 			};
 		case 68:
 			return {
 				ctor: '_Tuple3',
-				_0: _p27,
+				_0: _p38,
 				_1: _elm_lang$core$Native_Utils.update(
-					_p28,
-					{previousDirection: _p28.direction, direction: _user$project$ShootingFun$Right, momentumSpeedCounter: 4}),
+					_p39,
+					{previousDirection: _p39.direction, direction: _user$project$ShootingFun$Right, momentumSpeedCounter: 4}),
 				_2: _elm_lang$core$Platform_Cmd$none
 			};
 		default:
-			return {ctor: '_Tuple3', _0: _p27, _1: _p28, _2: _elm_lang$core$Platform_Cmd$none};
+			return {ctor: '_Tuple3', _0: _p38, _1: _p39, _2: _elm_lang$core$Platform_Cmd$none};
 	}
 };
-var _user$project$ShootingFun$momentum = function (_p29) {
-	var _p30 = _p29;
-	var _p31 = _p30._0;
-	var speed = _user$project$ShootingFun$speedConversion(_p31);
-	var moreSpeed = ((_elm_lang$core$Native_Utils.cmp(_p31.momentumSpeedCounter, -8) > 0) && (_elm_lang$core$Native_Utils.cmp(_p31.momentumSpeedCounter, 8) < 0)) ? (_elm_lang$core$Native_Utils.eq(_p31.direction, _user$project$ShootingFun$Left) ? -1 : 1) : 0;
-	var reset = _elm_lang$core$Native_Utils.eq(_p31.previousDirection, _p31.direction) ? _p31.momentumSpeedCounter : 0;
+var _user$project$ShootingFun$momentum = function (_p40) {
+	var _p41 = _p40;
+	var _p42 = _p41._0;
+	var speed = _user$project$ShootingFun$speedConversion(_p42);
+	var moreSpeed = ((_elm_lang$core$Native_Utils.cmp(_p42.momentumSpeedCounter, -8) > 0) && (_elm_lang$core$Native_Utils.cmp(_p42.momentumSpeedCounter, 8) < 0)) ? (_elm_lang$core$Native_Utils.eq(_p42.direction, _user$project$ShootingFun$Left) ? -1 : 1) : 0;
+	var reset = _elm_lang$core$Native_Utils.eq(_p42.previousDirection, _p42.direction) ? _p42.momentumSpeedCounter : 0;
 	var newCounter = reset + moreSpeed;
-	return _elm_lang$core$Native_Utils.eq(_p31.direction, _user$project$ShootingFun$Left) ? {
+	return _elm_lang$core$Native_Utils.eq(_p42.direction, _user$project$ShootingFun$Left) ? {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p31,
+			_p42,
 			{
-				position: {x: _p31.position.x - speed, y: _p31.position.y},
+				position: {x: _p42.position.x - speed, y: _p42.position.y},
 				momentumSpeedCounter: newCounter
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
-	} : (_elm_lang$core$Native_Utils.eq(_p31.direction, _user$project$ShootingFun$Right) ? {
+	} : (_elm_lang$core$Native_Utils.eq(_p42.direction, _user$project$ShootingFun$Right) ? {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p31,
+			_p42,
 			{
-				position: {x: _p31.position.x + speed, y: _p31.position.y},
+				position: {x: _p42.position.x + speed, y: _p42.position.y},
 				momentumSpeedCounter: newCounter
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	} : {
 		ctor: '_Tuple2',
 		_0: _elm_lang$core$Native_Utils.update(
-			_p31,
+			_p42,
 			{
-				position: {x: _p31.position.x, y: _p31.position.y}
+				position: {x: _p42.position.x, y: _p42.position.y}
 			}),
 		_1: _elm_lang$core$Platform_Cmd$none
 	});
 };
-var _user$project$ShootingFun$updateGame = function (_p32) {
-	var _p33 = _p32;
-	return _user$project$ShootingFun$movBpos(
-		_user$project$ShootingFun$outOfScreen(
-			_user$project$ShootingFun$bulletReset(
-				_user$project$ShootingFun$updateDirection(
-					_user$project$ShootingFun$momentum(
-						_user$project$ShootingFun$blockSize(
-							{ctor: '_Tuple2', _0: _p33._0, _1: _p33._1}))))));
+var _user$project$ShootingFun$updateGame = function (_p43) {
+	var _p44 = _p43;
+	return _user$project$ShootingFun$masterCheckOutcome(
+		_user$project$ShootingFun$masterDeath(
+			_user$project$ShootingFun$masterMonsterMove(
+				_user$project$ShootingFun$mapCollision(
+					_user$project$ShootingFun$movBpos(
+						_user$project$ShootingFun$outOfScreen(
+							_user$project$ShootingFun$bulletReset(
+								_user$project$ShootingFun$updateDirection(
+									_user$project$ShootingFun$momentum(
+										_user$project$ShootingFun$blockSize(
+											{ctor: '_Tuple2', _0: _p44._0, _1: _p44._1}))))))))));
 };
 var _user$project$ShootingFun$update = F2(
 	function (msg, model) {
-		var _p34 = msg;
-		switch (_p34.ctor) {
+		var _p45 = msg;
+		switch (_p45.ctor) {
+			case 'StartGame':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							screen: 1,
+							position: {x: 380, y: 380},
+							monsters: {
+								ctor: '::',
+								_0: {x: 80, y: 50},
+								_1: {
+									ctor: '::',
+									_0: {x: 160, y: 50},
+									_1: {
+										ctor: '::',
+										_0: {x: 240, y: 50},
+										_1: {
+											ctor: '::',
+											_0: {x: 320, y: 50},
+											_1: {
+												ctor: '::',
+												_0: {x: 400, y: 50},
+												_1: {
+													ctor: '::',
+													_0: {x: 480, y: 50},
+													_1: {
+														ctor: '::',
+														_0: {x: 560, y: 50},
+														_1: {
+															ctor: '::',
+															_0: {x: 640, y: 50},
+															_1: {
+																ctor: '::',
+																_0: {x: 120, y: 100},
+																_1: {
+																	ctor: '::',
+																	_0: {x: 200, y: 100},
+																	_1: {
+																		ctor: '::',
+																		_0: {x: 280, y: 100},
+																		_1: {
+																			ctor: '::',
+																			_0: {x: 360, y: 100},
+																			_1: {
+																				ctor: '::',
+																				_0: {x: 440, y: 100},
+																				_1: {
+																					ctor: '::',
+																					_0: {x: 520, y: 100},
+																					_1: {
+																						ctor: '::',
+																						_0: {x: 600, y: 100},
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							win: false
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'KeyMsg':
 				return _user$project$ShootingFun$fire(
 					_user$project$ShootingFun$movePos(
-						{ctor: '_Tuple2', _0: _p34._0, _1: model}));
+						{ctor: '_Tuple2', _0: _p45._0, _1: model}));
 			case 'SizeUpdated':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{dimensions: _p34._0}),
+						{dimensions: _p45._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Nothing':
@@ -10259,6 +10397,191 @@ var _user$project$ShootingFun$update = F2(
 					{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none});
 		}
 	});
+var _user$project$ShootingFun$StartGame = {ctor: 'StartGame'};
+var _user$project$ShootingFun$view = function (model) {
+	if (_elm_lang$core$Native_Utils.eq(model.screen, 0)) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$ShootingFun$StartGame),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text('Click here to play'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg$text('   Instructions: Use keys A to move left, D to move right and space to shoot'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text('   Objective: Kill the monsters from space before they invade your home'),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	} else {
+		if (_elm_lang$core$Native_Utils.eq(model.screen, 1)) {
+			var mimage = './monster.png';
+			var pimage = './player.png';
+			var bs = model.blockSize;
+			var _p46 = _user$project$ShootingFun$scale(model.dimensions);
+			var scaledWidth = _p46._0;
+			var scaledHeight = _p46._1;
+			var posBY = _elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$toFloat(model.bulletPosition.y) * model.blockSize);
+			var posBX = _elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$toFloat(model.bulletPosition.x) * model.blockSize);
+			var posY = _elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$toFloat(model.position.y) * model.blockSize);
+			var posX = _elm_lang$core$Basics$toString(
+				_elm_lang$core$Basics$toFloat(model.position.x) * model.blockSize);
+			return A2(
+				_elm_lang$svg$Svg$svg,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$width('100%'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$height('100%'),
+						_1: {ctor: '[]'}
+					}
+				},
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					{
+						ctor: '::',
+						_0: _user$project$ShootingFun$renderBackground(model),
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$rect,
+								{
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$x(posBX),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$y(posBY),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$width(
+												_elm_lang$core$Basics$toString(2 * bs)),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$height(
+													_elm_lang$core$Basics$toString(10 * bs)),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$svg$Svg_Attributes$fill('red'),
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						},
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$svg$Svg$image,
+									{
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$x(posX),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$svg$Svg_Attributes$y(posY),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$width(
+													_elm_lang$core$Basics$toString(50 * bs)),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$svg$Svg_Attributes$height(
+														_elm_lang$core$Basics$toString(50 * bs)),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$svg$Svg_Attributes$xlinkHref(pimage),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {ctor: '[]'}
+							},
+							A2(
+								_elm_lang$core$List$map,
+								_user$project$ShootingFun$drawMonster(model),
+								model.monsters)))));
+		} else {
+			if (_elm_lang$core$Native_Utils.eq(model.win, true)) {
+				return A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text('Congratulations! You fended off the invaders this time.'),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$ShootingFun$StartGame),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$svg$Svg$text('Click here to play again'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					});
+			} else {
+				return A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text('Alas! You weren\'t able to stop the invaders.'),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$ShootingFun$StartGame),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$svg$Svg$text('Click here to try your luck again'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					});
+			}
+		}
+	}
+};
 var _user$project$ShootingFun$Nothing = {ctor: 'Nothing'};
 var _user$project$ShootingFun$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
