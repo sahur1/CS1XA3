@@ -49,4 +49,3 @@ testEvalProp6 = quickCheck evalProp6
 evalProp7 :: Double -> Bool
 evalProp7 a = eval (Map.fromList [("x",a)]) (Sin (Var "x")) == sin(a)
 testEvalProp7 = quickCheck evalProp7
-
