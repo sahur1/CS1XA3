@@ -1,4 +1,4 @@
-This is assignment 3 and a readme<h1>Haskell Math Library 2018</h1>
+<h1>Haskell Math Library 2018</h1>
  <a href="http://ugweb.cas.mcmaster.ca/~sahur1/docs" target="_blank">Documentation</a>
 
 <h3>Basic Functionalities:</h3>
